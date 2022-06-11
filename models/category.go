@@ -1,6 +1,8 @@
 package models
 
 type Category struct {
-	Name   string
-	Parent string
+	Id       int
+	Name     string
+	ParentId int
+	UserId   int
 }
