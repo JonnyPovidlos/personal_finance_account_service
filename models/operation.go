@@ -3,9 +3,17 @@ package models
 import "time"
 
 type Operation struct {
-	OperationType string
-	Amount        float64
-	Description   string
-	Category      string
-	CreatedAt     time.Time
+	UserId      int
+	Type        TypeOperation
+	Amount      float64
+	Description string
+	CategoryId  int
+	CreatedAt   time.Time
 }
+
+type TypeOperation string
+
+const (
+	SALE TypeOperation = "sale"
+	BUY                = "buy"
+)
