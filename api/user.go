@@ -51,6 +51,7 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Println(err)
 		} else {
+			w.Header().Set("userId", fmt.Sprintf("%d", *userId))
 			fmt.Fprint(w, "userId: ", *userId)
 		}
 

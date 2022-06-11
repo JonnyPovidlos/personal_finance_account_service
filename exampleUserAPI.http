@@ -1,3 +1,4 @@
+### Регистрация
 POST http://0.0.0.0:8080/account/sign-up
 Content-Type: application/json
 
@@ -8,7 +9,7 @@ Content-Type: application/json
   "password": "awesomeSecretPass"
 }
 
-###
+### Логин
 POST http://0.0.0.0:8080/account/sign-in
 Content-Type: application/json
 
