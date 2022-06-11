@@ -10,6 +10,7 @@ var userPrefix = "/account"
 
 func main() {
 	http.HandleFunc(userPrefix+"/sign-up", api.SignUp)
+	http.HandleFunc(userPrefix+"/sign-in", api.SignIn)
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		log.Fatal(err)

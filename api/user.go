@@ -35,3 +35,24 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
+
+func SignIn(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		var signUser models.SignUser
+		body, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			log.Println(err)
+		}
+		if err := json.Unmarshal(body, &signUser); err != nil {
+			log.Println(err)
+		}
+		log.Println(signUser)
+		userId, err := userUseCase.Auth(signUser)
+		if err != nil {
+			log.Println(err)
+		} else {
+			fmt.Fprint(w, "userId: ", *userId)
+		}
+
+	}
+}

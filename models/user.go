@@ -14,3 +14,8 @@ type CreateUser struct {
 	Email     string
 	Password  string
 }
+
+type SignUser struct {
+	Email    string
+	Password string
+}

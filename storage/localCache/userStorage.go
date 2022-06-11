@@ -30,3 +30,16 @@ func (u *UserCacheStorage) Insert(createUser models.CreateUser) (id *int, err er
 	}
 	return id, nil
 }
+
+func (u *UserCacheStorage) GetByEmail(email string) (signUser *models.User, err error) {
+	for _, user := range u.users {
+		if user.Email == email {
+			signUser = user
+			break
+		}
+	}
+	if signUser == nil {
+		return nil, fmt.Errorf("incorrect pass or email")
+	}
+	return signUser, nil
+}

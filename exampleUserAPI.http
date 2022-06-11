@@ -1,0 +1,18 @@
+POST http://0.0.0.0:8080/account/sign-up
+Content-Type: application/json
+
+{
+  "firstName": "testName",
+  "lastName": "testLastName",
+  "email": "johndoe@example.com",
+  "password": "awesomeSecretPass"
+}
+
+###
+POST http://0.0.0.0:8080/account/sign-in
+Content-Type: application/json
+
+{
+"email": "johndoe@example.com",
+"password": "awesomeSecretPass"
+}
