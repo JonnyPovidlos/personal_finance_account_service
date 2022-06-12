@@ -1,0 +1,7 @@
+### Создание главной категории
+POST http://0.0.0.0:8080/api/category
+Content-Type: application/json
+
+{
+  "name": "testCategory"
+}

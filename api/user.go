@@ -9,6 +9,7 @@ import (
 	"personal_finance_account_service/models"
 	"personal_finance_account_service/storage/localCache"
 	"personal_finance_account_service/useCase"
+	"time"
 )
 
 var userStorage = localCache.NewUserCacheStorage()
@@ -49,9 +50,22 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 		log.Println(signUser)
 		userId, err := userUseCase.Auth(signUser)
 		if err != nil {
-			log.Println(err)
+			fmt.Fprint(w, "err: ", err)
 		} else {
-			w.Header().Set("userId", fmt.Sprintf("%d", *userId))
+			cookie, err := r.Cookie("User-Id")
+			if err != nil {
+				cookie = &http.Cookie{
+					Name:     "User-Id",
+					Value:    fmt.Sprintf("%d", *userId),
+					Expires:  time.Now().Add(15 * time.Minute),
+					MaxAge:   60 * 60,
+					Path:     "/",
+					Domain:   "0.0.0.0",
+					HttpOnly: true,
+				}
+
+				http.SetCookie(w, cookie)
+			}
 			fmt.Fprint(w, "userId: ", *userId)
 		}
 

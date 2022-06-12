@@ -6,14 +6,21 @@ import (
 	"personal_finance_account_service/api"
 )
 
-var userPrefix = "/account"
+var userPrefix = "/api/account"
+var categoryPrefix = "/api/category"
 
 func main() {
-	http.HandleFunc(userPrefix+"/sign-up", api.SignUp)
-	http.HandleFunc(userPrefix+"/sign-in", api.SignIn)
+	mux := http.NewServeMux()
+	createCategoryHandler := http.HandlerFunc(api.CreateCategory)
+	mux.Handle(categoryPrefix, api.CheckAuth(createCategoryHandler))
+
+	//mux.HandleFunc(categoryPrefix, api.CreateCategory)
+	mux.HandleFunc(userPrefix+"/sign-up", api.SignUp)
+	mux.HandleFunc(userPrefix+"/sign-in", api.SignIn)
+	//http.HandleFunc(categoryPrefix, api.CheckAuth(api.CreateCategory))
 
 	log.Println("Server start")
-	err := http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(":8080", mux)
 	if err != nil {
 		log.Fatal(err)
 	}
