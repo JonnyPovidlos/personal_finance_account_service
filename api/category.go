@@ -38,22 +38,41 @@ func CreateCategory(w http.ResponseWriter, r *http.Request) {
 }
 
 func EditCategory(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodPatch {
-		path := strings.Split(r.URL.String(), "/")
-		categoryId, _ := strconv.Atoi(path[3])
+	path := strings.Split(r.URL.String(), "/")
+	categoryId, _ := strconv.Atoi(path[3])
 
-		userId, err := strconv.Atoi(r.Context().Value("UserId").(string))
+	userId, _ := strconv.Atoi(r.Context().Value("UserId").(string))
+	if r.Method == http.MethodPatch {
 		var editCategory models.EditCategory
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			log.Println(err)
 		}
 		err = json.Unmarshal(body, &editCategory)
+		editCategory.Id = categoryId
 		if err != nil {
 			log.Println(err)
 		}
-		editCategory.Id = categoryId
-		category := categoryUseCase.Edit(editCategory, userId)
-		fmt.Fprint(w, "category: ", category.String())
+		resp := UpdateCategory(&editCategory, userId)
+		fmt.Fprint(w, resp)
+	}
+	if r.Method == http.MethodDelete {
+		resp := DeleteCategory(categoryId, userId)
+		fmt.Fprint(w, resp)
+	}
+}
+
+func UpdateCategory(editCategory *models.EditCategory, userId int) string {
+	category := categoryUseCase.Edit(*editCategory, userId)
+	return fmt.Sprintf("category: %s", category.String())
+}
+
+func DeleteCategory(categoryId int, userId int) string {
+
+	err := categoryUseCase.Delete(categoryId, userId)
+	if err != nil {
+		return fmt.Sprintf("error: %s", err)
+	} else {
+		return fmt.Sprintf("category success deleted: %d", categoryId)
 	}
 }

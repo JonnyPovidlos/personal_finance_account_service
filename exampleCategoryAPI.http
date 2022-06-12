@@ -14,3 +14,6 @@ Content-Type: application/json
   "name": "qwe",
   "parentId": 4
 }
+
+### Удаление категории
+DELETE http://0.0.0.0:8080/api/category/1

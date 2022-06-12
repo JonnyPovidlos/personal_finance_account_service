@@ -48,7 +48,6 @@ func (c *categoryCacheStorage) Edit(category models.EditCategory, userId int) (m
 	if !ok {
 		userCategories = newUserCategories()
 	}
-	fmt.Println(userCategories.categories)
 	var name string
 	for _, ctgr := range userCategories.categories {
 		if category.Id == ctgr.Id {
@@ -69,4 +68,26 @@ func (c *categoryCacheStorage) Edit(category models.EditCategory, userId int) (m
 		}
 	}
 	return *userCategories.categories[name], nil
+}
+
+func (c *categoryCacheStorage) Delete(categoryId int, userId int) error {
+	deleteCategory := c.getById(categoryId, userId)
+	if deleteCategory != nil {
+		delete(c.usersCategories[userId].categories, deleteCategory.Name)
+		return nil
+	}
+	return fmt.Errorf("not exists category")
+}
+
+func (c *categoryCacheStorage) getById(categoryId int, userId int) *models.Category {
+	userCategories, ok := c.usersCategories[userId]
+	if !ok {
+		userCategories = newUserCategories()
+	}
+	for _, category := range userCategories.categories {
+		if category.Id == categoryId {
+			return category
+		}
+	}
+	return nil
 }
