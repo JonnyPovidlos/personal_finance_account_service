@@ -5,3 +5,12 @@ Content-Type: application/json
 {
   "name": "testCategory"
 }
+
+### Редактировани категории
+PATCH http://0.0.0.0:8080/api/category/1
+Content-Type: application/json
+
+{
+  "name": "qwe",
+  "parentId": 4
+}

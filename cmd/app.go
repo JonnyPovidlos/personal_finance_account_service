@@ -13,6 +13,7 @@ func main() {
 	mux := http.NewServeMux()
 	createCategoryHandler := http.HandlerFunc(api.CreateCategory)
 	mux.Handle(categoryPrefix, api.CheckAuth(createCategoryHandler))
+	mux.Handle(categoryPrefix+"/", api.CheckAuth(http.HandlerFunc(api.EditCategory)))
 
 	//mux.HandleFunc(categoryPrefix, api.CreateCategory)
 	mux.HandleFunc(userPrefix+"/sign-up", api.SignUp)

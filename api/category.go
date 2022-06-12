@@ -10,6 +10,7 @@ import (
 	"personal_finance_account_service/storage/localCache"
 	"personal_finance_account_service/useCase"
 	"strconv"
+	"strings"
 )
 
 var categoryStorage = localCache.NewCategoryCacheStorage()
@@ -33,5 +34,26 @@ func CreateCategory(w http.ResponseWriter, r *http.Request) {
 		} else {
 			fmt.Fprint(w, "categoryId: ", *categoryId)
 		}
+	}
+}
+
+func EditCategory(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPatch {
+		path := strings.Split(r.URL.String(), "/")
+		categoryId, _ := strconv.Atoi(path[3])
+
+		userId, err := strconv.Atoi(r.Context().Value("UserId").(string))
+		var editCategory models.EditCategory
+		body, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			log.Println(err)
+		}
+		err = json.Unmarshal(body, &editCategory)
+		if err != nil {
+			log.Println(err)
+		}
+		editCategory.Id = categoryId
+		category := categoryUseCase.Edit(editCategory, userId)
+		fmt.Fprint(w, "category: ", category.String())
 	}
 }

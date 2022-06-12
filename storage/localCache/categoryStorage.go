@@ -1,6 +1,7 @@
 package localCache
 
 import (
+	"fmt"
 	"personal_finance_account_service/models"
 )
 
@@ -40,4 +41,32 @@ func (c *categoryCacheStorage) Insert(category models.CreateCategory, userId int
 	c.usersCategories[userId] = userCategories
 	//fmt.Println(*c.usersCategories[userId].categories["test"])
 	return categoryId, nil
+}
+
+func (c *categoryCacheStorage) Edit(category models.EditCategory, userId int) (models.Category, error) {
+	userCategories, ok := c.usersCategories[userId]
+	if !ok {
+		userCategories = newUserCategories()
+	}
+	fmt.Println(userCategories.categories)
+	var name string
+	for _, ctgr := range userCategories.categories {
+		if category.Id == ctgr.Id {
+			name = ctgr.Name
+			if category.Name != nil {
+				name = *category.Name
+				delete(userCategories.categories, ctgr.Name)
+				userCategories.categories[name] = &models.Category{
+					Id:       ctgr.Id,
+					Name:     *category.Name,
+					ParentId: ctgr.ParentId,
+					UserId:   userId,
+				}
+			}
+			if category.ParentId != nil {
+				userCategories.categories[name].ParentId = category.ParentId
+			}
+		}
+	}
+	return *userCategories.categories[name], nil
 }
