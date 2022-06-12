@@ -4,7 +4,7 @@ import "personal_finance_account_service/models"
 
 type CategoryStorage interface {
 	Insert(category models.CreateCategory, userId int) (categoryId *int, err error)
-	Edit(category models.EditCategory, userId int) (models.Category, error)
+	Edit(category models.EditCategory, userId int) (*models.Category, error)
 	Delete(categoryId int, userId int) error
 }
 
@@ -24,9 +24,12 @@ func (c *CategoryUseCase) Create(createCategory models.CreateCategory, userId in
 	return categoryId, nil
 }
 
-func (c *CategoryUseCase) Edit(editCategory models.EditCategory, userId int) models.Category {
-	category, _ := c.storage.Edit(editCategory, userId)
-	return category
+func (c *CategoryUseCase) Edit(editCategory models.EditCategory, userId int) (*models.Category, error) {
+	category, err := c.storage.Edit(editCategory, userId)
+	if err != nil {
+		return nil, err
+	}
+	return category, nil
 }
 
 func (c *CategoryUseCase) Delete(categoryId int, userId int) error {

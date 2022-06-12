@@ -53,21 +53,24 @@ func EditCategory(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Println(err)
 		}
-		resp := UpdateCategory(&editCategory, userId)
+		resp := updateCategory(&editCategory, userId)
 		fmt.Fprint(w, resp)
 	}
 	if r.Method == http.MethodDelete {
-		resp := DeleteCategory(categoryId, userId)
+		resp := deleteCategory(categoryId, userId)
 		fmt.Fprint(w, resp)
 	}
 }
 
-func UpdateCategory(editCategory *models.EditCategory, userId int) string {
-	category := categoryUseCase.Edit(*editCategory, userId)
+func updateCategory(editCategory *models.EditCategory, userId int) string {
+	category, err := categoryUseCase.Edit(*editCategory, userId)
+	if err != nil {
+		return fmt.Sprintf("error: %s", err)
+	}
 	return fmt.Sprintf("category: %s", category.String())
 }
 
-func DeleteCategory(categoryId int, userId int) string {
+func deleteCategory(categoryId int, userId int) string {
 
 	err := categoryUseCase.Delete(categoryId, userId)
 	if err != nil {

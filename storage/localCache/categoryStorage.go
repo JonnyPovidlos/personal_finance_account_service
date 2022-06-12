@@ -43,31 +43,27 @@ func (c *categoryCacheStorage) Insert(category models.CreateCategory, userId int
 	return categoryId, nil
 }
 
-func (c *categoryCacheStorage) Edit(category models.EditCategory, userId int) (models.Category, error) {
-	userCategories, ok := c.usersCategories[userId]
-	if !ok {
-		userCategories = newUserCategories()
+func (c *categoryCacheStorage) Edit(category models.EditCategory, userId int) (*models.Category, error) {
+	updatedCategory := c.getById(category.Id, userId)
+	if updatedCategory == nil {
+		return nil, fmt.Errorf("not exists category")
 	}
 	var name string
-	for _, ctgr := range userCategories.categories {
-		if category.Id == ctgr.Id {
-			name = ctgr.Name
-			if category.Name != nil {
-				name = *category.Name
-				delete(userCategories.categories, ctgr.Name)
-				userCategories.categories[name] = &models.Category{
-					Id:       ctgr.Id,
-					Name:     *category.Name,
-					ParentId: ctgr.ParentId,
-					UserId:   userId,
-				}
-			}
-			if category.ParentId != nil {
-				userCategories.categories[name].ParentId = category.ParentId
-			}
+	name = updatedCategory.Name
+	if category.Name != nil {
+		name = *category.Name
+		delete(c.usersCategories[userId].categories, updatedCategory.Name)
+		c.usersCategories[userId].categories[name] = &models.Category{
+			Id:       updatedCategory.Id,
+			Name:     *category.Name,
+			ParentId: updatedCategory.ParentId,
+			UserId:   userId,
 		}
 	}
-	return *userCategories.categories[name], nil
+	if category.ParentId != nil {
+		c.usersCategories[userId].categories[name].ParentId = category.ParentId
+	}
+	return c.usersCategories[userId].categories[name], nil
 }
 
 func (c *categoryCacheStorage) Delete(categoryId int, userId int) error {
